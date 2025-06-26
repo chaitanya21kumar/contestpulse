@@ -1,38 +1,53 @@
-// components/Navbar.jsx
-import Link from 'next/link';
+// components/Nav.jsx
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-const Navbar = () => {
+const platforms = [
+  { name: "All",        key: "all" },      // shows every contest
+  { name: "Codeforces", key: "codeforces"},
+  { name: "LeetCode",   key: "leetcode"  },
+  { name: "CodeChef",   key: "codechef"  },
+  { name: "AtCoder",    key: "atcoder"   },
+  { name: "HackerRank", key: "hackerrank"},
+  { name: "HackerEarth",key: "hackerearth"},
+];
+
+export default function Nav() {
+  const router = useRouter();
+  const active = (router.query.platform ?? "all").toString().toLowerCase();
+
+  const linkClasses = (key) =>
+    `whitespace-nowrap transition-colors duration-150
+     ${key === active ? "text-accent" : "text-white/70 hover:text-accent"}`;
+
   return (
-    <nav
-      className="
-        fixed inset-x-0 top-0 z-50
-        bg-black/30         /* translucent dark film */
-        backdrop-blur-md    /* subtle frosted-glass effect */
-        shadow-sm
-      "
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        {/* logo / title */}
-        <Link href="/" className="text-lg font-semibold tracking-wide text-white">
-          Contest&nbsp;Pulse
+    <nav className="fixed top-0 z-50 w-full bg-primary/30 backdrop-blur-md border-b border-white/10">
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-3">
+        {/* --- brand --- */}
+        <Link href="/" legacyBehavior>
+          <a className="font-semibold text-lg md:text-xl">
+            Contest<span className="text-accent">Pulse</span>
+          </a>
         </Link>
 
-        {/* (stub) nav links – add or edit as you expand */}
-        <ul className="flex items-center gap-6 text-sm font-medium text-gray-200">
-          <li>
-            <Link href="#features" className="transition-opacity hover:opacity-80">
-              Features
-            </Link>
-          </li>
-          <li>
-            <Link href="#contests" className="transition-opacity hover:opacity-80">
-              Upcoming Contests
-            </Link>
-          </li>
+        {/* --- platform buttons --- */}
+        <ul className="flex flex-wrap gap-4 md:gap-6">
+          {platforms.map(({ name, key }) => (
+            <li key={key}>
+              <Link
+                href={{
+                  pathname: "/",
+                  query: key === "all" ? {} : { platform: key },
+                }}
+                scroll={false}
+                legacyBehavior
+              >
+                <a className={linkClasses(key)}>{name}</a>
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

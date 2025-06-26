@@ -1,70 +1,70 @@
 // components/ContestList.jsx
-
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const ContestList = () => {
-  const [contests, setContests] = useState([]);
-  const [loading, setLoading] = useState(true);
+const fmt = (ms) =>
+  new Date(ms).toLocaleString("en-GB", { hour12: false });
+
+export default function ContestList() {
+  const { query }  = useRouter();
+  const platform   = (query.platform ?? "all").toString().toLowerCase();
+
+  const [contests, setContests] = useState([]);     // ← always an array
+  const [state,    setState]    = useState("loading"); // loading | ready | error
+  const [message,  setMessage]  = useState("");     // optional error text
 
   useEffect(() => {
-    const fetchContests = async () => {
-      try {
-        const response = await fetch("/api/contests/codeforces");
-        const data = await response.json();
-        setContests(data.contests);
-      } catch (error) {
-        console.error("Error fetching contests:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setState("loading");
+    fetch(`/api/contests${platform === "all" ? "" : `?platform=${platform}`}`)
+      .then(async (res) => {
+        const data = await res.json();
 
-    fetchContests();
-  }, []);
+        // backend signals error via HTTP 500 or via { error: ... }
+        if (!res.ok || data.error) {
+          throw new Error(data.error || "Unexpected response");
+        }
 
-  const formatTime = (timestamp) => {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleString("en-IN", {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZone: "Asia/Kolkata",
-    });
-  };
+        setContests(Array.isArray(data.contests) ? data.contests : []);
+        setState("ready");
+      })
+      .catch((err) => {
+        setMessage(err.message);
+        setContests([]);          // keep it an array ⇒ no .length crash
+        setState("error");
+      });
+  }, [platform]);
 
-  const formatDuration = (seconds) => {
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    return `${hrs}h ${mins}m`;
-  };
+  /* ---------- render ---------- */
+  if (state === "loading") return <p>Loading contests…</p>;
+
+  if (state === "error")
+    return (
+      <p className="text-red-500">
+        Failed to load contests{message ? `: ${message}` : "."}
+      </p>
+    );
+
+  if (!contests.length) return <p>No upcoming contests.</p>;
 
   return (
-    <div className="mt-12 text-white">
-      <h2 className="text-3xl font-bold text-accent mb-6 text-center">Upcoming Codeforces Contests</h2>
-
-      {loading ? (
-        <p className="text-center text-lg text-gray-400">Loading contests...</p>
-      ) : contests.length === 0 ? (
-        <p className="text-center text-lg text-red-400">No upcoming contests found.</p>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-4">
-          {contests.map((contest) => (
-            <div
-              key={contest.id}
-              className="border border-accent rounded-xl p-4 shadow-lg bg-black/30 backdrop-blur"
-            >
-              <h3 className="text-xl font-semibold mb-2">{contest.name}</h3>
-              <p className="text-sm text-gray-300">
-                ⏰ <strong>Starts:</strong> {formatTime(contest.startTimeSeconds)}
-              </p>
-              <p className="text-sm text-gray-300">
-                ⏳ <strong>Duration:</strong> {formatDuration(contest.durationSeconds)}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {contests.map((c) => (
+        <a
+          key={c.name + c.start_time}
+          href={c.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="
+            block rounded-lg border border-white/10 p-4 transition
+            hover:border-accent/50 hover:shadow-xl hover:scale-[1.03]
+          "
+        >
+          <h3 className="font-medium mb-1">{c.name}</h3>
+          <p className="text-sm text-white/60">
+            {fmt(c.start_time)} • {c.platform}
+          </p>
+        </a>
+      ))}
     </div>
   );
-};
-
-export default ContestList;
+}
