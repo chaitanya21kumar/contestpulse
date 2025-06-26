@@ -2,48 +2,82 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const fmt = (ms) =>
+/* ---------- helpers ---------- */
+const fmtDate = (ms) =>
   new Date(ms).toLocaleString("en-GB", { hour12: false });
 
+const fmtLeft = (ms) => {
+  if (ms <= 0) return "starts now";
+
+  const s = Math.floor(ms / 1000);
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+
+  return [
+    d ? `${d}d` : "",
+    h ? `${h}h` : "",
+    `${m}m`,
+  ]
+    .filter(Boolean)
+    .join(" ");
+};
+
+/* ---------- component ---------- */
 export default function ContestList() {
-  const { query }  = useRouter();
-  const platform   = (query.platform ?? "all").toString().toLowerCase();
+  const platform = (useRouter().query.platform ?? "all")
+    .toString()
+    .toLowerCase();
 
-  const [contests, setContests] = useState([]);     // ← always an array
-  const [state,    setState]    = useState("loading"); // loading | ready | error
-  const [message,  setMessage]  = useState("");     // optional error text
+  const [contests, setContests] = useState([]);
+  const [state, setState]       = useState("loading"); // loading | ready | error
+  const [msg,   setMsg]         = useState("");
 
+  /* fetch on mount + when platform changes */
   useEffect(() => {
     setState("loading");
     fetch(`/api/contests${platform === "all" ? "" : `?platform=${platform}`}`)
-      .then(async (res) => {
-        const data = await res.json();
+      .then(async (r) => {
+        const d = await r.json();
+        if (!r.ok || d.error) throw new Error(d.error || "Bad response");
 
-        // backend signals error via HTTP 500 or via { error: ... }
-        if (!res.ok || data.error) {
-          throw new Error(data.error || "Unexpected response");
-        }
-
-        setContests(Array.isArray(data.contests) ? data.contests : []);
+        // attach initial timeLeft
+        const now = Date.now();
+        setContests(
+          (Array.isArray(d.contests) ? d.contests : []).map((c) => ({
+            ...c,
+            timeLeft: c.start_time - now,
+          }))
+        );
         setState("ready");
       })
-      .catch((err) => {
-        setMessage(err.message);
-        setContests([]);          // keep it an array ⇒ no .length crash
+      .catch((e) => {
         setState("error");
+        setMsg(e.message);
       });
   }, [platform]);
 
+  /* tick every minute */
+  useEffect(() => {
+    if (state !== "ready") return;
+
+    const id = setInterval(() => {
+      setContests((list) =>
+        list.map((c) => ({ ...c, timeLeft: c.start_time - Date.now() }))
+      );
+    }, 60 * 1000); // once per minute is enough accuracy
+
+    return () => clearInterval(id);
+  }, [state]);
+
   /* ---------- render ---------- */
   if (state === "loading") return <p>Loading contests…</p>;
-
   if (state === "error")
     return (
       <p className="text-red-500">
-        Failed to load contests{message ? `: ${message}` : "."}
+        Failed to load contests{msg ? `: ${msg}` : "."}
       </p>
     );
-
   if (!contests.length) return <p>No upcoming contests.</p>;
 
   return (
@@ -55,13 +89,26 @@ export default function ContestList() {
           target="_blank"
           rel="noopener noreferrer"
           className="
-            block rounded-lg border border-white/10 p-4 transition
-            hover:border-accent/50 hover:shadow-xl hover:scale-[1.03]
+            group block rounded-lg border border-white/10 p-4 transition
+            hover:border-accent/60 hover:shadow-xl hover:-translate-y-[2px]
           "
         >
-          <h3 className="font-medium mb-1">{c.name}</h3>
-          <p className="text-sm text-white/60">
-            {fmt(c.start_time)} • {c.platform}
+          {/* name */}
+          <h3 className="font-medium mb-1 group-hover:text-accent">{c.name}</h3>
+
+          {/* date & platform */}
+          <p className="text-sm text-white/60 mb-1">
+            {fmtDate(c.start_time)} • {c.platform}
+          </p>
+
+          {/* countdown */}
+          <p
+            className="
+              text-sm font-medium text-accent/90
+              group-hover:animate-pulse
+            "
+          >
+            {fmtLeft(c.timeLeft)}
           </p>
         </a>
       ))}

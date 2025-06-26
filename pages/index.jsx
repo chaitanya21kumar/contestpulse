@@ -1,4 +1,3 @@
-// pages/index.jsx
 import { motion } from "framer-motion";
 
 import ContestList from "../components/ContestList";
@@ -14,15 +13,14 @@ const Home = () => (
         h-screen w-full overflow-hidden
       "
     >
-      {/* --- Emerald radial glow in top-right --- */}
+      {/* Emerald radial glow */}
       <div
         className="
           absolute inset-0 z-0
           bg-[radial-gradient(circle_at_top_right,_#14b869_0%,_transparent_70%)]
         "
       />
-
-      {/* --- subtle vignette --- */}
+      {/* Subtle vignette */}
       <div
         className="
           absolute inset-0 z-0
@@ -31,7 +29,7 @@ const Home = () => (
         "
       />
 
-      {/* --- Hero content (no ProjectsBtn) --- */}
+      {/* Hero text */}
       <div className="relative z-10 container mx-auto px-4 xl:px-0">
         <motion.h1
           variants={fadeIn("down", 0.2)}
@@ -52,14 +50,15 @@ const Home = () => (
           className="max-w-sm xl:max-w-xl mx-auto xl:mx-0 mt-6"
         >
           Discover, filter and get notified about upcoming contests on&nbsp;
-          Codeforces, CodeChef, AtCoder and more &mdash; stay ahead in your
+          Codeforces, CodeChef, LeetCode and more — stay ahead in your
           competitive-programming journey.
         </motion.p>
       </div>
     </section>
 
     {/* ================= CONTEST LIST SECTION ================= */}
-    <section className="relative z-10 container mx-auto px-4">
+    <section className="relative z-10 container mx-auto px-4 mt-[-40vh]">
+      {/* ↑ temporary negative margin so the grid is visible without scrolling */}
       <ContestList />
     </section>
   </div>
