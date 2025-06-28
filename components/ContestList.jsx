@@ -1,5 +1,11 @@
+// components/ContestList.jsx
+
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import { auth, db }                 from "../lib/firebase";
+import { onAuthStateChanged }       from "firebase/auth";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 
 /* ---------- helpers ---------- */
 const fmtDate = (ms) =>
@@ -13,26 +19,99 @@ const fmtLeft = (ms) => {
   const h = Math.floor((s % 86400) / 3600);
   const m = Math.floor((s % 3600) / 60);
 
-  return [
-    d ? `${d}d` : "",
-    h ? `${h}h` : "",
-    `${m}m`,
-  ]
+  return [d ? `${d}d` : "", h ? `${h}h` : "", `${m}m`]
     .filter(Boolean)
     .join(" ");
 };
 
-/* ---------- component ---------- */
+/* ─── ContestCard subcomponent ─────────────────────────────────── */
+function ContestCard({ contest, user }) {
+  const router = useRouter();
+  const contestId = encodeURIComponent(contest.url);
+
+  const [subscribed, setSubscribed] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setSubscribed(false);
+      return;
+    }
+    const ref = doc(db, "users", user.uid, "subscriptions", contestId);
+    getDoc(ref).then((snap) => {
+      setSubscribed(snap.exists());
+    });
+  }, [user, contestId]);
+
+  const toggleNotify = async () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+    const ref = doc(db, "users", user.uid, "subscriptions", contestId);
+    if (subscribed) {
+      await deleteDoc(ref);
+      setSubscribed(false);
+    } else {
+      await setDoc(ref, { ...contest });
+      setSubscribed(true);
+    }
+  };
+
+  return (
+    <div>
+      <a
+        href={contest.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="
+          group block rounded-lg border border-white/10 p-4 transition
+          hover:border-accent/60 hover:shadow-xl hover:-translate-y-[2px]
+        "
+      >
+        <h3 className="font-medium mb-1 group-hover:text-accent">
+          {contest.name}
+        </h3>
+        <p className="text-sm text-white/60 mb-1">
+          {fmtDate(contest.start_time)} • {contest.platform}
+        </p>
+        <p className="text-sm font-medium text-accent group-hover:animate-pulse">
+          {fmtLeft(contest.timeLeft)}
+        </p>
+      </a>
+
+      <button
+        onClick={toggleNotify}
+        className={`mt-4 btn w-full ${
+          subscribed
+            ? "bg-red-600 hover:bg-red-700"
+            : "bg-accent hover:brightness-110"
+        }`}
+      >
+        {subscribed ? "Unsubscribe" : "Notify me"}
+      </button>
+    </div>
+  );
+}
+
+/* ─── Main ContestList component ───────────────────────────────── */
 export default function ContestList({ limit }) {
-  const platform = (useRouter().query.platform ?? "all")
+  const router   = useRouter();
+  const platform = (router.query.platform ?? "all")
     .toString()
     .toLowerCase();
 
   const [contests, setContests] = useState([]);
   const [state, setState]       = useState("loading"); // loading | ready | error
-  const [msg,   setMsg]         = useState("");
+  const [msg, setMsg]           = useState("");
+  const [user, setUser]         = useState(null);
 
-  /* fetch on mount + when platform changes */
+  // listen for auth changes
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
+    return unsub;
+  }, []);
+
+  // fetch contests whenever platform changes
   useEffect(() => {
     setState("loading");
     fetch(`/api/contests${platform === "all" ? "" : `?platform=${platform}`}`)
@@ -55,20 +134,18 @@ export default function ContestList({ limit }) {
       });
   }, [platform]);
 
-  /* tick every minute */
+  // update countdown every minute
   useEffect(() => {
     if (state !== "ready") return;
-
     const id = setInterval(() => {
       setContests((list) =>
         list.map((c) => ({ ...c, timeLeft: c.start_time - Date.now() }))
       );
     }, 60 * 1000);
-
     return () => clearInterval(id);
   }, [state]);
 
-  /* ---------- render ---------- */
+  // render states
   if (state === "loading") return <p>Loading contests…</p>;
   if (state === "error")
     return (
@@ -78,34 +155,13 @@ export default function ContestList({ limit }) {
     );
   if (!contests.length) return <p>No upcoming contests.</p>;
 
-  // apply limit if provided
-  const displayed = typeof limit === "number"
-    ? contests.slice(0, limit)
-    : contests;
+  const displayed =
+    typeof limit === "number" ? contests.slice(0, limit) : contests;
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {displayed.map((c) => (
-        <a
-          key={c.name + c.start_time}
-          href={c.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="
-            group block rounded-lg border border-white/10 p-4 transition
-            hover:border-accent/60 hover:shadow-xl hover:-translate-y-[2px]
-          "
-        >
-          <h3 className="font-medium mb-1 group-hover:text-accent">
-            {c.name}
-          </h3>
-          <p className="text-sm text-white/60 mb-1">
-            {fmtDate(c.start_time)} • {c.platform}
-          </p>
-          <p className="text-sm font-medium text-accent group-hover:animate-pulse">
-            {fmtLeft(c.timeLeft)}
-          </p>
-        </a>
+        <ContestCard key={c.url} contest={c} user={user} />
       ))}
     </div>
   );
