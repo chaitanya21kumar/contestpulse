@@ -1,6 +1,11 @@
 // components/Nav.jsx
+
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+
+import { auth } from "../lib/firebase";               // your Firebase client
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const platforms = [
   { name: "Home",       key: "home",       href: "/"                     },
@@ -12,9 +17,23 @@ const platforms = [
 ];
 
 export default function Nav() {
-  const { query } = useRouter();
-  // if no query.platform, treat as "home"
+  const { query, push } = useRouter();
   const active = (query.platform ?? "home").toString().toLowerCase();
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // subscribe to auth changes
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    push("/");  // redirect home after logout
+  };
 
   return (
     <nav className="fixed top-0 z-50 w-full bg-primary/30 backdrop-blur-md border-b border-white/10">
@@ -25,7 +44,7 @@ export default function Nav() {
           </a>
         </Link>
 
-        <ul className="flex flex-wrap gap-4 md:gap-6">
+        <ul className="flex flex-wrap gap-4 md:gap-6 items-center">
           {platforms.map(({ name, key, href }) => (
             <li key={key}>
               <Link href={href} scroll={false} legacyBehavior>
@@ -41,6 +60,35 @@ export default function Nav() {
               </Link>
             </li>
           ))}
+
+          {/* Auth links */}
+          {!user ? (
+            <>
+              <li>
+                <Link href="/login" legacyBehavior>
+                  <a className="whitespace-nowrap text-white/70 hover:text-accent">
+                    Log In
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/signup" legacyBehavior>
+                  <a className="whitespace-nowrap text-white/70 hover:text-accent">
+                    Sign Up
+                  </a>
+                </Link>
+              </li>
+            </>
+          ) : (
+            <li>
+              <button
+                onClick={handleLogout}
+                className="whitespace-nowrap text-white/70 hover:text-accent"
+              >
+                Logout
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
