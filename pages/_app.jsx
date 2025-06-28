@@ -1,3 +1,4 @@
+// pages/_app.jsx
 import Head from "next/head";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";

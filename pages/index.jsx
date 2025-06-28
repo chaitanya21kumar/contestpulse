@@ -9,7 +9,7 @@ export default function Home() {
   const { query } = useRouter();
   const platform  = query.platform?.toString().toLowerCase();
 
-  // ─── TRUE HOME (no platform query) ────────────────────────────────────────
+  /* ───────────────────── HERO (landing, no ?platform) ─────────────────── */
   if (!platform) {
     return (
       <div className="min-h-screen pb-24">
@@ -20,11 +20,11 @@ export default function Home() {
             h-screen w-full overflow-hidden
           "
         >
-          {/* Emerald glow & vignette layers */}
+          {/* 🔵 Green radial glow + subtle vignette — landing ONLY */}
           <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_right,_#14b869_0%,_transparent_70%)]" />
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/0 via-black/20 to-black/50 mix-blend-overlay" />
 
-          {/* Hero content */}
+          {/* Hero Text */}
           <div className="relative z-10 container mx-auto px-4 xl:px-0">
             <motion.h1
               variants={fadeIn("down", 0.2)}
@@ -54,12 +54,11 @@ export default function Home() {
     );
   }
 
-  // ─── “ALL” OR SPECIFIC PLATFORM VIEW ─────────────────────────────────────
-  // platform === "all" or "codeforces", "leetcode", etc.
+  /* ───────────────────── PLATFORM / “ALL” VIEW ─────────────────────────── */
   const title =
     platform === "all"
       ? "All Contests"
-      : `${platform.charAt(0).toUpperCase() + platform.slice(1)} Contests`;
+      : `${platform[0].toUpperCase() + platform.slice(1)} Contests`;
 
   return (
     <div className="min-h-screen pb-24 pt-24">
