@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 
 import Layout from "../components/Layout";
-import Nav from "../components/Nav";          // ← only here
+import Nav from "../components/Nav";
 import Transition from "../components/Transition";
 
 import "../styles/globals.css";
@@ -24,9 +24,11 @@ function MyApp({ Component, pageProps }) {
       </Head>
 
       <Layout>
-        <Nav />                               {/* ONE bar */}
+        <Nav />
+
         <AnimatePresence mode="wait">
-          <motion.div key={router.route} className="h-full">
+          {/* allow full page to grow past 100vh */}
+          <motion.div key={router.route} className="min-h-full">
             <Transition />
             <Component {...pageProps} />
           </motion.div>

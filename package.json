@@ -62,6 +62,7 @@
     "react-icons": "^4.8.0",
     "react-tsparticles": "^2.9.3",
     "swiper": "^9.4.0",
+    "swr": "^2.3.3",
     "tailwind-scrollbar": "^3.0.4",
     "tsparticles": "^2.12.0"
   },

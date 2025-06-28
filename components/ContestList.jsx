@@ -1,4 +1,3 @@
-// components/ContestList.jsx
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -24,7 +23,7 @@ const fmtLeft = (ms) => {
 };
 
 /* ---------- component ---------- */
-export default function ContestList() {
+export default function ContestList({ limit }) {
   const platform = (useRouter().query.platform ?? "all")
     .toString()
     .toLowerCase();
@@ -41,7 +40,6 @@ export default function ContestList() {
         const d = await r.json();
         if (!r.ok || d.error) throw new Error(d.error || "Bad response");
 
-        // attach initial timeLeft
         const now = Date.now();
         setContests(
           (Array.isArray(d.contests) ? d.contests : []).map((c) => ({
@@ -65,7 +63,7 @@ export default function ContestList() {
       setContests((list) =>
         list.map((c) => ({ ...c, timeLeft: c.start_time - Date.now() }))
       );
-    }, 60 * 1000); // once per minute is enough accuracy
+    }, 60 * 1000);
 
     return () => clearInterval(id);
   }, [state]);
@@ -80,9 +78,14 @@ export default function ContestList() {
     );
   if (!contests.length) return <p>No upcoming contests.</p>;
 
+  // apply limit if provided
+  const displayed = typeof limit === "number"
+    ? contests.slice(0, limit)
+    : contests;
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {contests.map((c) => (
+      {displayed.map((c) => (
         <a
           key={c.name + c.start_time}
           href={c.url}
@@ -93,21 +96,13 @@ export default function ContestList() {
             hover:border-accent/60 hover:shadow-xl hover:-translate-y-[2px]
           "
         >
-          {/* name */}
-          <h3 className="font-medium mb-1 group-hover:text-accent">{c.name}</h3>
-
-          {/* date & platform */}
+          <h3 className="font-medium mb-1 group-hover:text-accent">
+            {c.name}
+          </h3>
           <p className="text-sm text-white/60 mb-1">
             {fmtDate(c.start_time)} • {c.platform}
           </p>
-
-          {/* countdown */}
-          <p
-            className="
-              text-sm font-medium text-accent/90
-              group-hover:animate-pulse
-            "
-          >
+          <p className="text-sm font-medium text-accent group-hover:animate-pulse">
             {fmtLeft(c.timeLeft)}
           </p>
         </a>
