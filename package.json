@@ -55,6 +55,7 @@
     "framer-motion": "^10.12.16",
     "next": "14.1.1",
     "node-fetch": "^3.3.2",
+    "puppeteer": "^24.11.1",
     "react": "18.2.0",
     "react-countup": "^6.4.2",
     "react-dom": "18.2.0",
