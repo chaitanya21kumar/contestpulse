@@ -1,11 +1,9 @@
 // pages/_app.jsx
 import Head from "next/head";
-import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 
 import Layout from "../components/Layout";
-import Nav from "../components/Nav";
-import Transition from "../components/Transition";
+import Nav    from "../components/Nav";
 
 import "../styles/globals.css";
 
@@ -25,14 +23,7 @@ function MyApp({ Component, pageProps }) {
 
       <Layout>
         <Nav />
-
-        <AnimatePresence mode="wait">
-          {/* allow full page to grow past 100vh */}
-          <motion.div key={router.route} className="min-h-full">
-            <Transition />
-            <Component {...pageProps} />
-          </motion.div>
-        </AnimatePresence>
+        <Component {...pageProps} key={router.asPath} />
       </Layout>
     </>
   );
