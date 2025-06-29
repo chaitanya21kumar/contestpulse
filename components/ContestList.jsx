@@ -1,5 +1,4 @@
 // components/ContestList.jsx
-
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -56,7 +55,8 @@ function ContestCard({ contest, user }) {
       await deleteDoc(ref);
       setSubscribed(false);
     } else {
-      await setDoc(ref, { ...contest });
+      /* ➕ store the subscriber’s email so the server can use it directly */
+      await setDoc(ref, { ...contest, email: user.email });
       setSubscribed(true);
     }
   };
@@ -97,20 +97,20 @@ function ContestCard({ contest, user }) {
 /* ─── Main ContestList component ───────────────────────────────── */
 export default function ContestList({ limit }) {
   const router = useRouter();
-  const platform = (router.query.platform ?? "all")
-    .toString()
-    .toLowerCase();
+  const platform = (router.query.platform ?? "all").toString().toLowerCase();
 
-  const [contests, setContests] = useState([]);
-  const [state, setState] = useState("loading");
-  const [msg, setMsg] = useState("");
-  const [user, setUser] = useState(null);
+  const [contests, setContests]   = useState([]);
+  const [state, setState]         = useState("loading"); // loading | ready | error
+  const [msg, setMsg]             = useState("");
+  const [user, setUser]           = useState(null);
 
+  /* listen for auth changes */
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
     return unsub;
   }, []);
 
+  /* fetch contests whenever platform changes */
   useEffect(() => {
     setState("loading");
     fetch(`/api/contests${platform === "all" ? "" : `?platform=${platform}`}`)
@@ -133,6 +133,7 @@ export default function ContestList({ limit }) {
       });
   }, [platform]);
 
+  /* update countdown every minute */
   useEffect(() => {
     if (state !== "ready") return;
     const id = setInterval(() => {
@@ -143,6 +144,7 @@ export default function ContestList({ limit }) {
     return () => clearInterval(id);
   }, [state]);
 
+  /* render states */
   if (state === "loading") return <p>Loading contests…</p>;
   if (state === "error")
     return (
