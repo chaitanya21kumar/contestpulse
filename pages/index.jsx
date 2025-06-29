@@ -96,7 +96,7 @@ export default function Home() {
       <section className="relative z-10 container mx-auto px-4">
         <h2 className="text-2xl font-semibold mb-6 text-white">{title}</h2>
         {/* cap at 12 cards on “All” */}
-        <ContestList limit={platform === "all" ? 12 : undefined} />
+        <ContestList limit={platform === "all" ? 9 : undefined} />
       </section>
     </div>
   );

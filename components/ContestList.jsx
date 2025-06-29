@@ -3,9 +3,14 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { auth, db }                 from "../lib/firebase";
-import { onAuthStateChanged }       from "firebase/auth";
-import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { auth, db } from "../lib/firebase";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 /* ---------- helpers ---------- */
 const fmtDate = (ms) =>
@@ -28,7 +33,6 @@ const fmtLeft = (ms) => {
 function ContestCard({ contest, user }) {
   const router = useRouter();
   const contestId = encodeURIComponent(contest.url);
-
   const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
@@ -58,17 +62,14 @@ function ContestCard({ contest, user }) {
   };
 
   return (
-    <div>
+    <div className="flex flex-col justify-between h-full p-4 rounded-lg border border-white/10 hover:border-accent/60 hover:shadow-xl hover:-translate-y-[2px] transition">
       <a
         href={contest.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="
-          group block rounded-lg border border-white/10 p-4 transition
-          hover:border-accent/60 hover:shadow-xl hover:-translate-y-[2px]
-        "
+        className="group flex-1"
       >
-        <h3 className="font-medium mb-1 group-hover:text-accent">
+        <h3 className="font-medium mb-1 group-hover:text-accent break-words">
           {contest.name}
         </h3>
         <p className="text-sm text-white/60 mb-1">
@@ -95,23 +96,21 @@ function ContestCard({ contest, user }) {
 
 /* ─── Main ContestList component ───────────────────────────────── */
 export default function ContestList({ limit }) {
-  const router   = useRouter();
+  const router = useRouter();
   const platform = (router.query.platform ?? "all")
     .toString()
     .toLowerCase();
 
   const [contests, setContests] = useState([]);
-  const [state, setState]       = useState("loading"); // loading | ready | error
-  const [msg, setMsg]           = useState("");
-  const [user, setUser]         = useState(null);
+  const [state, setState] = useState("loading");
+  const [msg, setMsg] = useState("");
+  const [user, setUser] = useState(null);
 
-  // listen for auth changes
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
     return unsub;
   }, []);
 
-  // fetch contests whenever platform changes
   useEffect(() => {
     setState("loading");
     fetch(`/api/contests${platform === "all" ? "" : `?platform=${platform}`}`)
@@ -134,7 +133,6 @@ export default function ContestList({ limit }) {
       });
   }, [platform]);
 
-  // update countdown every minute
   useEffect(() => {
     if (state !== "ready") return;
     const id = setInterval(() => {
@@ -145,7 +143,6 @@ export default function ContestList({ limit }) {
     return () => clearInterval(id);
   }, [state]);
 
-  // render states
   if (state === "loading") return <p>Loading contests…</p>;
   if (state === "error")
     return (
@@ -161,7 +158,9 @@ export default function ContestList({ limit }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {displayed.map((c) => (
-        <ContestCard key={c.url} contest={c} user={user} />
+        <div key={c.url} className="h-full">
+          <ContestCard contest={c} user={user} />
+        </div>
       ))}
     </div>
   );
