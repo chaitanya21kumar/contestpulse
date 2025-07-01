@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
     console.log("⏰ now:", now);
 
-    // 1️⃣ Run a collection‐group query to get all subscriptions
+    // 1️⃣ Fetch all subscriptions via collection‐group query
     const url =
       `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}` +
       `/databases/(default)/documents:runQuery?key=${FIREBASE_API_KEY}`;
@@ -35,16 +35,13 @@ export default async function handler(req, res) {
       body: JSON.stringify(body),
     }).then(r => r.json());
 
-    const docs = rows
-      .filter(r => r.document)
-      .map(r => r.document);
-
+    const docs = rows.filter(r => r.document).map(r => r.document);
     console.log(`✅ subscriptions found: ${docs.length}`);
 
     for (const d of docs) {
       const f = d.fields || {};
 
-      // require all needed fields
+      // skip malformed entries
       if (
         !f.name?.stringValue ||
         !f.platform?.stringValue ||
@@ -61,13 +58,18 @@ export default async function handler(req, res) {
       const before = toNum(f.notifyBefore) || 60 * 60 * 1000;
       const sendAt = start - before;
 
-      // only send if now >= sendAt && now < start
+      // only send if within the window
       if (now < sendAt || now >= start) {
         console.log(`⏭️ skipping (outside window): ${f.name.stringValue}`);
         continue;
       }
 
-      // 2️⃣ Send the email
+      // ─── Format start time in IST ───────────────────────────────
+      const formattedStart = new Date(start).toLocaleString("en-US", {
+        timeZone: "Asia/Kolkata",
+      });
+
+      // 2️⃣ Send the styled email
       console.log(
         `📨 sending to ${f.email.stringValue}: ${f.name.stringValue}`
       );
@@ -75,14 +77,49 @@ export default async function handler(req, res) {
         to: f.email.stringValue,
         subject: `⏰ Reminder: ${f.name.stringValue} starts soon`,
         html: `
-          <div style="font-family:sans-serif;line-height:1.4;color:#333">
-            <h2>⏰ Reminder: ${f.name.stringValue} on ${f.platform.stringValue}</h2>
-            <p>Starts at <strong>${new Date(start).toLocaleString()}</strong>.</p>
-            <p><a href="${f.url.stringValue}">View contest page</a></p>
-            <hr style="margin:20px 0;border:none;border-top:1px solid #eee"/>
-            <p style="font-size:0.85em;color:#666">
-              Sent by
-              <a href="https://contestpulse-chaitanya21kr.netlify.app" style="color:#1a73e8">
+          <div style="
+            font-family: sans-serif;
+            line-height: 1.4;
+            color: #333;
+            padding: 20px;
+          ">
+            <h2 style="
+              font-size: 24px;
+              margin: 0 0 12px;
+              color: #000; /* heading in black */
+            ">
+              ⏰ Reminder: ${f.name.stringValue} on ${f.platform.stringValue}
+            </h2>
+            <p style="
+              font-size: 16px;
+              margin: 4px 0 16px;
+            ">
+              Starts at <strong>${formattedStart}</strong>.
+            </p>
+            <p style="margin: 0 0 24px;">
+              <a href="${f.url.stringValue}" style="
+                color: #1a73e8;
+                text-decoration: none;
+                font-size: 16px;
+              ">
+                View contest page
+              </a>
+            </p>
+            <hr style="
+              border: none;
+              border-top: 1px solid #eee;
+              margin: 20px 0;
+            "/>
+            <p style="
+              font-size: 14px;
+              color: #666;
+              margin: 0;
+            ">
+              Sent with ❤️ by
+              <a href="https://contestpulse-chaitanya21kr.netlify.app" style="
+                color: #1a73e8;
+                text-decoration: none;
+              ">
                 ContestPulse
               </a>
             </p>
@@ -91,7 +128,7 @@ export default async function handler(req, res) {
       });
       sent.push(f.email.stringValue);
 
-      // 3️⃣ DELETE the subscription so it never re‐fires
+      // 3️⃣ DELETE the subscription so it never re-fires
       console.log("🗑️ deleting subscription:", d.name);
       const deleteUrl = `https://firestore.googleapis.com/v1/${encodeURI(
         d.name
