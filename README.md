@@ -5,7 +5,6 @@
 
 <p align="center">
   <a href="https://contestpulse-chaitanya21kr.netlify.app"><img src="https://img.shields.io/badge/Live-Site-green?style=for-the-badge&logo=netlify" alt="Live Site" /></a>
-  
 </p>
 
 ![homepage](./homepage.png)
@@ -20,22 +19,12 @@
 
 ## ✨ Features
 
-- 🔍 **Unified Contest Feed** – View contests from Codeforces, LeetCode, CodeChef, and AtCoder in one timeline.
-- 🚨 **Notify Me Button** – Instantly get notified about contests you're interested in.
-- 🧠 **Smart Filtering** – Quickly filter contests by platform.
-- 🌗 **Dark Mode UI** – Optimized for long night grinds.
+- 🔍 **Unified Contest Feed** – View contests from Codeforces, LeetCode, CodeChef, and AtCoder in one timeline.  
+- 🚨 **Instant Notifications** – One-click immediate contest alerts.  
+- ⏰ **Customizable Reminders** – Schedule email reminders minutes before any contest.  
+- 🧠 **Smart Filtering** – Quickly filter contests by platform.  
+- 🌗 **Dark Mode UI** – Optimized for long night grinds.  
 - 🔐 **Authentication** – Personalized greeting post-login.
-
----
-
-## 💡 Pulse+ (Coming Soon)
-
-![pulseplus](./pulseplus.png)
-
-- 📲 **WhatsApp Notifications**: Get contest alerts directly to your WhatsApp.
-- 📈 **CP Profile Analytics**: Visualize your progress using data from Codeforces, LeetCode, etc.
-
-We're just getting started. More power tools for competitive programmers are in the pipeline!
 
 ---
 
@@ -45,16 +34,22 @@ We're just getting started. More power tools for competitive programmers are in 
 
 ---
 
-## 🖼️ Screenshots
-
-### 🔐 Login Page
-![login](./login.png)
+## 🖼️ Screenshots (Logical Flow)
 
 ### 🏠 Home Page
 ![homepage](./homepage.png)
 
+### 🔐 Login Page
+![login](./login.png)
+
 ### 🗂️ All Contests
 ![all-contests](./all-contests.png)
+
+### 🔔 Notify Me Dialog  
+![set-email-reminder](./set-email-reminder.png)
+
+### 📧 Email Notification Received  
+![email-notification](./email-notification.png)
 
 ### 💪 Codeforces
 ![codeforces](./codeforces.png)
@@ -68,25 +63,28 @@ We're just getting started. More power tools for competitive programmers are in 
 ### 🥷 AtCoder
 ![atcoder](./atcoder.png)
 
+### 💡 Pulse+ (Coming Soon)
+![pulse+](./pulse+.png)
+
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js, React, TailwindCSS
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB
-- **Auth**: Google OAuth via NextAuth
-- **Analytics**: Google Analytics 4
+- **Frontend**: Next.js, React, TailwindCSS  
+- **Backend**: Node.js, Express.js  
+- **Database**: MongoDB  
+- **Auth**: Google OAuth via NextAuth  
+- **Analytics**: Google Analytics 4  
 - **Deployment**: Netlify
 
 ---
 
 ## 🔮 Future Plans (Pulse+)
 
-| Feature                | Description                                                                 |
-|------------------------|-----------------------------------------------------------------------------|
-| 📱 WhatsApp Notifications | Get instant contest reminders on WhatsApp                                    |
-| 📊 CP Profile Analysis    | Analyze and visualize your performance from Codeforces, LeetCode, and more |
+| Feature                    | Description                                                               |
+|----------------------------|---------------------------------------------------------------------------|
+| 📱 WhatsApp Notifications   | Get instant contest reminders on WhatsApp                                 |
+| 📊 CP Profile Analysis      | Analyze and visualize your performance from Codeforces, LeetCode, etc.    |
 
 ---
 
