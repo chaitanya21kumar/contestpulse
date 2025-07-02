@@ -102,6 +102,6 @@ If you love this project and want to support its growth:
   <a href="https://buymeacoffee.com/chaitanya21kr"><img src="https://img.shields.io/badge/Buy%20Me%20A-Coffee-orange?style=for-the-badge&logo=buymeacoffee&logoColor=white" alt="Sponsor" /></a>
 </p>
 
-Any small contribution helps 💛
+💛 Any small contribution helps 
 
 ---
