@@ -1,44 +1,41 @@
 // pages/index.jsx
 import { motion }    from "framer-motion";
 import { useRouter } from "next/router";
-import { useState, useEffect }        from "react";
-import { auth }                       from "../lib/firebase";
-import { onAuthStateChanged }         from "firebase/auth";
+import { useState, useEffect } from "react";
+import { auth }                from "../lib/firebase";
+import { onAuthStateChanged }  from "firebase/auth";
 
 import ContestList from "../components/ContestList";
 import { fadeIn }  from "../variants";
-import SEO         from "../components/SEO";        // ← NEW
+import SEO         from "../components/SEO";
 
 export default function Home() {
-  const { query } = useRouter();
-  const platform  = query.platform?.toString().toLowerCase();
+  const { query }  = useRouter();
+  const platform   = query.platform?.toString().toLowerCase();
 
-  /* ────────────────────────────────
-     derive dynamic meta-data
-     ──────────────────────────────── */
-  const siteURL       = "https://contestpulse-chaitanya21kr.netlify.app/";
-  const isRootPage    = !platform;
-  const title         = isRootPage
+  /* ── dynamic meta ───────────────────────── */
+  const siteURL    = "https://contestpulse-chaitanya21kr.netlify.app/";
+  const isRootPage = !platform;
+  const title      = isRootPage
     ? "ContestPulse – All Coding Contests in One Timeline (CF · LC · CC · AC)"
     : platform === "all"
         ? "All Coding Contests – ContestPulse"
         : `${platform[0].toUpperCase() + platform.slice(1)} Contests – ContestPulse`;
 
-  const description   = isRootPage
+  const description = isRootPage
     ? "Track upcoming programming contests across Codeforces, LeetCode, CodeChef & AtCoder. Set instant email alerts so you never miss a contest again."
     : `Upcoming ${platform === "all" ? "" : platform + " "}coding contests with dates, duration & links. Subscribe for instant reminders on ContestPulse.`;
 
-  /* ─── track signed-in user’s name ── */
+  /* ── greet signed-in user ──────────────── */
   const [name, setName] = useState("");
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      if (u) setName(u.displayName || u.email.split("@")[0]);
-      else   setName("");
-    });
+    const unsub = onAuthStateChanged(auth, (u) =>
+      setName(u ? u.displayName || u.email.split("@")[0] : "")
+    );
     return unsub;
   }, []);
 
-  /* ─── ROOT / HERO SECTION ───────── */
+  /* ── ROOT / HERO ───────────────────────── */
   if (isRootPage) {
     return (
       <>
@@ -47,6 +44,17 @@ export default function Home() {
           description={description}
           url={siteURL}
           image="/homepage.png"
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "ContestPulse",
+            description,
+            applicationCategory: "DeveloperApplication",
+            operatingSystem: "Web",
+            offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+            url: siteURL,
+            logo: siteURL + "logo.svg"
+          }}
         />
 
         <div className="min-h-screen pb-24">
@@ -63,7 +71,6 @@ export default function Home() {
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/0 via-black/20 to-black/50 mix-blend-overlay" />
 
             <div className="relative z-10 container mx-auto px-4 xl:px-0">
-              {/* Greeting */}
               {name && (
                 <motion.h3
                   variants={fadeIn("down", 0.1)}
@@ -105,7 +112,7 @@ export default function Home() {
     );
   }
 
-  /* ─── PLATFORM / “ALL” VIEW ─────── */
+  /* ── PLATFORM / “ALL” VIEW ─────────────── */
   return (
     <>
       <SEO
