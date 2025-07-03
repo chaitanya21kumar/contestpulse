@@ -11,18 +11,20 @@ import Head from "next/head";
      • image        ← social preview (path under /public or full URL)
      • type         ← OG type (website, article, etc.)
      • keywords     ← additional signals for non-Google engines
-     • noIndex      ← true → adds <meta name="robots" content="noindex">
+     • noIndex      ← true  → adds  <meta name="robots" content="noindex">
+     • jsonLd       ← JS object → injected as <script type="application/ld+json">
 -------------------------------------------------------------------*/
 export default function SEO({
   title = "ContestPulse – Smart CP Contest Tracker & Reminders",
   description =
     "Track upcoming programming contests across Codeforces, LeetCode, CodeChef & AtCoder, and get instant email alerts. Never miss a contest again.",
   url = "https://contestpulse-chaitanya21kr.netlify.app/",
-  image = "/homepage.png",      // in /public
+  image = "/homepage.png",
   type = "website",
   keywords =
     "ContestPulse, coding contest tracker, Codeforces contests, LeetCode contests, CodeChef contests, AtCoder contests, competitive programming reminders, CP notifier",
   noIndex = false,
+  jsonLd = null,
 }) {
   return (
     <Head>
@@ -34,7 +36,7 @@ export default function SEO({
       {/* Canonical */}
       <link rel="canonical" href={url} />
 
-      {/* Optionally block indexing (for template pages) */}
+      {/* Optionally block indexing */}
       {noIndex && <meta name="robots" content="noindex" />}
 
       {/* Open Graph */}
@@ -49,6 +51,15 @@ export default function SEO({
       <meta name="twitter:title"       content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image"       content={image} />
+
+      {/* Structured-data JSON-LD */}
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          // minified to keep <head> small
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
     </Head>
   );
 }
