@@ -2,13 +2,11 @@
   "name": "contestpulse",
   "version": "1.0.0",
   "private": true,
-
   "author": {
     "name": "Chaitanya Kumar",
     "email": "contestpulse@gmail.com",
     "url": "https://github.com/chaitanya21kumar"
   },
-
   "description": "ContestPulse – a smart coding-contest tracker with instant email alerts (Codeforces, LeetCode, CodeChef & AtCoder).",
   "keywords": [
     "contestpulse",
@@ -22,28 +20,22 @@
     "react",
     "tailwindcss"
   ],
-
   "license": "MIT",
-
   "repository": {
     "type": "git",
     "url": "https://github.com/chaitanya21kumar/contestpulse.git"
   },
-
   "homepage": "https://contestpulse-chaitanya21kr.netlify.app",
-
   "bugs": {
     "url": "https://github.com/chaitanya21kumar/contestpulse/issues",
     "email": "contestpulse@gmail.com"
   },
-
   "funding": [
     {
       "type": "Buy Me a Coffee",
       "url": "https://buymeacoffee.com/chaitanya21kr"
     }
   ],
-
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -51,7 +43,6 @@
     "start": "next start",
     "lint": "next lint"
   },
-
   "dependencies": {
     "@next/font": "^13.4.4",
     "@tsparticles/react": "^3.0.0",
@@ -64,14 +55,13 @@
     "react": "18.2.0",
     "react-countup": "^6.4.2",
     "react-dom": "18.2.0",
-    "react-icons": "^4.8.0",
+    "react-icons": "^4.12.0",
     "react-tsparticles": "^2.9.3",
     "swiper": "^9.4.0",
     "swr": "^2.3.3",
     "tailwind-scrollbar": "^3.0.4",
     "tsparticles": "^2.12.0"
   },
-
   "devDependencies": {
     "autoprefixer": "^10.4.14",
     "eslint": "8.41.0",
