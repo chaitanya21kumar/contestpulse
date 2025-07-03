@@ -1,54 +1,57 @@
 {
-  "name": "modern-portfolio",
-  "version": "1.0.1",
+  "name": "contestpulse",
+  "version": "1.0.0",
   "private": true,
+
   "author": {
-    "name": "Sanidhya Kumar Verma",
-    "email": "sanidhya.verma12345@gmail.com",
-    "url": "https://github.com/sanidhyy"
+    "name": "Chaitanya Kumar",
+    "email": "contestpulse@gmail.com",
+    "url": "https://github.com/chaitanya21kumar"
   },
-  "description": "Ethan Smith is a Full-stack web developer with 10+ years of experience.",
+
+  "description": "ContestPulse – a smart coding-contest tracker with instant email alerts (Codeforces, LeetCode, CodeChef & AtCoder).",
   "keywords": [
-    "react",
-    "next",
+    "contestpulse",
+    "coding contest tracker",
+    "codeforces",
+    "leetcode",
+    "codechef",
+    "atcoder",
+    "competitive programming",
     "nextjs",
-    "html",
-    "css",
-    "javascript",
-    "js",
-    "modern-ui",
-    "modern-ux",
-    "portfolio",
-    "framer-motion",
-    "3d-website",
-    "particle-effect"
+    "react",
+    "tailwindcss"
   ],
+
   "license": "MIT",
+
   "repository": {
     "type": "git",
-    "url": "https://github.com/sanidhyy/modern-portfolio.git"
+    "url": "https://github.com/chaitanya21kumar/contestpulse.git"
   },
-  "homepage": "https://github.com/sanidhyy/modern-portfolio#readme",
+
+  "homepage": "https://contestpulse-chaitanya21kr.netlify.app",
+
   "bugs": {
-    "url": "https://github.com/sanidhyy/modern-portfolio/issues",
-    "email": "sanidhya.verma12345@gmail.com"
+    "url": "https://github.com/chaitanya21kumar/contestpulse/issues",
+    "email": "contestpulse@gmail.com"
   },
+
   "funding": [
     {
-      "type": "patreon",
-      "url": "https://www.patreon.com/sanidhy"
-    },
-    {
-      "type": "Buy me a coffee",
-      "url": "https://www.buymeacoffee.com/sanidhy"
+      "type": "Buy Me a Coffee",
+      "url": "https://buymeacoffee.com/chaitanya21kr"
     }
   ],
+
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint"
   },
+
   "dependencies": {
     "@next/font": "^13.4.4",
     "@tsparticles/react": "^3.0.0",
@@ -68,10 +71,12 @@
     "tailwind-scrollbar": "^3.0.4",
     "tsparticles": "^2.12.0"
   },
+
   "devDependencies": {
     "autoprefixer": "^10.4.14",
     "eslint": "8.41.0",
     "eslint-config-next": "^13.4.3",
+    "next-sitemap": "^4.2.3",
     "postcss": "^8.4.23",
     "tailwindcss": "^3.3.2"
   }
