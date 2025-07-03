@@ -5,6 +5,7 @@
 
 <p align="center">
   <a href="https://contestpulse-chaitanya21kr.netlify.app"><img src="https://img.shields.io/badge/Live-Site-green?style=for-the-badge&logo=netlify" alt="Live Site" /></a>
+  <a href="https://github.com/sponsors/chaitanya21kumar"><img src="https://img.shields.io/badge/Sponsor-💖-ff69b4.svg?style=for-the-badge" alt="Sponsor"></a>
 </p>
 
 ![homepage](./homepage.png)
@@ -99,7 +100,9 @@ This project is licensed under the **MIT License**.
 If you love this project and want to support its growth:
 
 <p align="left">
-  <a href="https://buymeacoffee.com/chaitanya21kr"><img src="https://img.shields.io/badge/Buy%20Me%20A-Coffee-orange?style=for-the-badge&logo=buymeacoffee&logoColor=white" alt="Sponsor" /></a>
+  <a href="https://github.com/sponsors/chaitanya21kumar"><img src="https://img.shields.io/badge/GitHub-💖%20Sponsor-orange?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="GitHub Sponsor" /></a>
+  &nbsp;
+  <a href="https://buymeacoffee.com/chaitanya21kr"><img src="https://img.shields.io/badge/Buy%20Me%20A-Coffee-orange?style=for-the-badge&logo=buymeacoffee&logoColor=white" alt="Buy Me a Coffee" /></a>
 </p>
 
 Any small contribution helps 💛 

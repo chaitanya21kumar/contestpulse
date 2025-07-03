@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://contestpulse-chaitanya21kr.netlify.app
+
+# Sitemaps
+Sitemap: https://contestpulse-chaitanya21kr.netlify.app/sitemap.xml
