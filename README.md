@@ -1,7 +1,7 @@
 <h1 align="center">🚀 ContestPulse</h1>
 <p align="center">Your smart coding contest tracker — across Codeforces, LeetCode, CodeChef, and AtCoder. Never miss a contest again.</p>
 
-<p align="center"><i>Track Contests from All Platforms · Get Instant Alerts & Analytics 💡</i></p>
+<p align="center"><i>Track Contests across All Platforms · Get Instant Alerts & Analytics 💡</i></p>
 
 <p align="center">
   <a href="https://contestpulse-chaitanya21kr.netlify.app"><img src="https://img.shields.io/badge/Live-Site-green?style=for-the-badge&logo=netlify" alt="Live Site" /></a>
